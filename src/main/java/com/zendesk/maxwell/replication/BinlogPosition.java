@@ -23,7 +23,18 @@ public class BinlogPosition implements Serializable {
 	private final String file;
 
 	public BinlogPosition(String gtidSetStr, String gtid, long l, String file) {
-		this.gtidSetStr = gtidSetStr;
+		if(gtid != null&&null != gtidSetStr){
+			String[] a = gtidSetStr.split(",");
+			String[] crgs = gtid.split(":");
+			for (int i = 0; i < a.length; i++) {
+				String[] gs = a[i].split(":");
+				if (gs[0].equals(crgs[0]))
+					a[i] = gs[0] + ":" + gs[1].replaceAll("-\\d*","-") + crgs[1];
+			}
+			this.gtidSetStr = String.join(",",a);
+		}else{
+			this.gtidSetStr = gtidSetStr;
+		}
 		this.gtid = gtid;
 		this.offset = l;
 		this.file = file;
